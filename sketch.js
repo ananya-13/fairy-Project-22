@@ -1,86 +1,64 @@
-var canvas;
-var music;
-var fixSprite1, fixSprite2, fixSprite3, fixSprite4;
-var movingSprite;
+var starImg, fairyImg, bgImg;
+var fairy , fairyVoice;
+var star, starBody;
 
-function preload(){
-    music = loadSound("music.mp3");
-}
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
-
-function setup(){
-    
-    createCanvas(800,600);
-
-    
-
-    movingSprite=createSprite(random(10,750),300,20,20);
-    movingSprite.shapeColor="white";
-    movingSprite.velocityX=3;
-    movingSprite.velocityY=3;
-
-   
-    fixSprite1=createSprite(100,580,180,30);
-    fixSprite1.shapeColor="red";
-
-    fixSprite2=createSprite(300,580,180,30);
-    fixSprite2.shapeColor="green";
-
-    fixSprite3=createSprite(500,580,180,30);
-    fixSprite3.shapeColor="blue";
-
-    fixSprite4=createSprite(700,580,180,30);
-    fixSprite4.shapeColor="yellow";
-
-    
+function preload()
+{
+	starImg = loadImage("star.png");
+	fairyImg = loadAnimation("fairyImage1.png","fairyImage2.png");
+	bgImg = loadImage("starNight.png");
+	fairyVoice = loadSound("JoyMusic.mp3");
 
 }
 
+function setup() {
+	createCanvas(800, 750);
+
+	// fairyVoice.play();
+
+	fairy = createSprite(130, 520);
+	fairy.addAnimation("fairyflying",fairyImg);  
+	fairy.scale =0.25;
+
+	star = createSprite(650,30);
+	star.addImage(starImg);
+	star.scale = 0.2;
+
+	engine = Engine.create();
+	world = engine.world;
+
+	starBody = Bodies.circle(650 , 30 , 5 , {restitution:0.5, isStatic:true});
+	World.add(world, starBody);
+	
+	Engine.run(engine);
+
+}
 function draw() {
-    background(rgb(169,169,169))
-   
-    if(movingSprite.x<0){
-      music.stop()
-        movingSprite.velocityX=3
-    }else if(movingSprite.x>800){
-      music.stop()
-        movingSprite.velocityX=-3
-    }
-   
-  if(movingSprite.isTouching(fixSprite4)){
-    music.play()
-    movingSprite.shapeColor="yellow";
-    movingSprite.bounceOff(fixSprite4);
-    
-  }
-  
-  else if(movingSprite.isTouching(fixSprite3)){
-    music.stop()
-    movingSprite.shapeColor="blue";
-    movingSprite.velocityX=0;
-    movingSprite.velocityY=0;
-   
-  }
-    
-  else if(movingSprite.isTouching(fixSprite2)){
-    music.stop()
-    movingSprite.shapeColor="green";
-    movingSprite.velocityX=0;
-    movingSprite.velocityY=0;
-  }
-  
-  else if(movingSprite.isTouching(fixSprite1)){
-    music.stop()
-    movingSprite.shapeColor="red";
-    movingSprite.bounceOff(fixSprite1)
-  }
 
-  if (movingSprite.y<0){
-    music.stop()
-    movingSprite.velocityY=3
-  }
+	Engine.update(engine)
 
-  
-   
-    drawSprites()
+  background(bgImg);
+  fairy.velocityX=0
+  fairy.velocityY=0
+ 
+  if(keyDown(RIGHT_ARROW)){
+	fairy.velocityX=6
+}else if (keyDown(LEFT_ARROW)){
+	fairy.velocityX=-6
+}else if (keyDown(DOWN_ARROW)){
+	star.velocityY=3
 }
+
+if(star.y>470){
+	star.velocityY=0
+}
+
+  drawSprites();
+
+}
+    
